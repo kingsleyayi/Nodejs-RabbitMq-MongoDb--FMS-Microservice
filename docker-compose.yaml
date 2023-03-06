@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  user:
+    build: ./user
+    container_name: user
+    restart: always
+    networks:
+      - my_network
+    ports:
+      - "4000:4000"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./user/:/user/
+      - /user/node_modules
+      
+  heartbeat:
+    build: ./heartbeat
+    container_name: heartbeat
+    restart: always
+    networks:
+      - my_network
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./heartbeat/:/heartbeat/
+      - /heartbeat/node_modules
+
+  point:
+    build: ./point
+    container_name: point
+    restart: always
+    networks:
+      - my_network
+    ports:
+      - "9005:9005"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./point/:/point/
+      - /point/node_modules
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
